@@ -3,10 +3,7 @@
 
 ## 1. Construct columns
 
-```Scala
-```
-
-### 1.1 Access a column
+## 1.1 Access a column
 ```Scala
 import org.apache.spark.sql.functions.col
 
@@ -24,7 +21,7 @@ val revDF = eventsDF.filter($"ecommerce.purchase_revenue_in_usd".isNotNull)
   .sort($"avg_purchase_revenue".desc)
 ```
 
-### 1.2 Subset columns -> select(), selectExpr(), drop()
+## 1.2 Subset columns -> select(), selectExpr(), drop()
 
 ### 1.2.1 select() Selects a set of columns or column based expressions
 ```Scala
@@ -46,5 +43,18 @@ val appleDF = eventsDF.selectExpr("user_id", "device in ('macOS', 'iOS') as appl
 ### 1.2.3 drop()
 ```Scala
 val anonymousDF = eventsDF.drop("user_id", "geo", "device")
+```
+
+## 1.3 Add or replace columns -> withColumn, withColumnRenamed()
+
+### 1.3.1 withColumn
+
+```Scala
+val mobileDF = eventsDF.withColumn("mobile", col("device").isin("iOS", "Android"))
+```
+### 1.3.2 withColumnRenamed
+
+```Scala
+val locationDF = eventsDF.withColumnRenamed("geo", "location")
 ```
 
