@@ -1,7 +1,12 @@
-%md
+
 # DataFrame & Column
-1. Construct columns
-1. Subset columns
-1. Add or replace columns
-1. Subset rows
-1. Sort rows
+
+## Construct columns
+
+import org.apache.spark.sql.functions.col
+
+```Scala
+col("device")
+$"device"
+eventsDF("device")
+```
