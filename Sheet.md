@@ -86,5 +86,49 @@ val stateAggregatesDF = df.groupBy("geo.state").agg(
   approx_count_distinct("user_id").alias("distinct_users"))
 ```
 
+## 3. Datetime Functions
+
+### 3.1 cast() -> Casts column to a different data type, specified using string representation or DataType.
+
+```Scala
+val timestampDF = df.withColumn("timestamp", (col("timestamp") / 1e6).cast("timestamp"))
+// or
+val timestampDF = df.withColumn("timestamp", (col("timestamp") / 1e6).cast(TimestampType))
+```
+
+### 3.2 Format date
+
+### 3.2.1 date_format() -> Converts a date/timestamp/string to a string formatted with the given date time pattern.
+valid date and time format patterns for <a href="https://spark.apache.org/docs/latest/sql-ref-datetime-pattern.html" target="_blank">Spark 3</a> and <a href="https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html" target="_blank">Spark 2</a>.
+```Scala
+val formattedDF = timestampDF.withColumn("date string", date_format(col("timestamp"), "MMMM dd, yyyy"))
+  .withColumn("time string", date_format(col("timestamp"), "HH:mm:ss.SSSSSS"))
+```
+
+### 3.2.2 Extract datetime attribute from timestamp
+
+```Scala
+val datetimeDF = timestampDF.withColumn("year", year(col("timestamp")))
+  .withColumn("month", month(col("timestamp")))
+  .withColumn("dayofweek", dayofweek(col("timestamp")))
+  .withColumn("minute", minute(col("timestamp")))
+  .withColumn("second", second(col("timestamp")))
+```
+
+### 3.2.3 Convert to Date
+
+```Scala
+val dateDF = timestampDF.withColumn("date", to_date(col("timestamp")))
+```
+
+
+### 3.2.4 Manipulate Datetimes
+
+Example: date_add
+
+```Scala
+val plus2DF = timestampDF.withColumn("plus_two_days", date_add(col("timestamp"), 2))
+```
+
 
 
