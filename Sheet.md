@@ -130,7 +130,9 @@ Example: date_add
 val plus2DF = timestampDF.withColumn("plus_two_days", date_add(col("timestamp"), 2))
 ```
 
-### 4. Manipulate Datetimes
+## 4. Complex types
+
+### 4.1 Extract item details
 
 ```Scala
 val detailsDF = (df.withColumn("items", explode(col("items"))) // выделяет каждый элемент сложного типа в отдельную колонку
@@ -138,3 +140,52 @@ val detailsDF = (df.withColumn("items", explode(col("items"))) // выделяе
   .withColumn("details", split(col("item_name"), " ")) // разделает строку на элементы по пробелу Standard Full Mattress -> ["Standard", "Full", "Mattress"]
 )
 ```
+
+### 4.2 Extract size and quality options from purchases
+
+```Scala
+val mattressDF = detailsDF.filter(array_contains(col("details"), "Mattress")) //Filter detailsDF for records where details contains "Mattress"
+  .withColumn("size", element_at(col("details"), 2)) //Add size column from extracting element at position 2
+  .withColumn("quality", element_at(col("details"), 1)) //Add quality column from extracting element at position 1
+)
+// or same for pillows
+
+val pillowDF = detailsDF.filter(array_contains(col("details"), "Pillow"))
+  .withColumn("size", element_at(col("details"), 1))
+  .withColumn("quality", element_at(col("details"), 2))
+```
+
+### 4.3 Extract size and quality options from purchases
+
+```Scala
+val mattressDF = detailsDF.filter(array_contains(col("details"), "Mattress")) //Filter detailsDF for records where details contains "Mattress"
+  .withColumn("size", element_at(col("details"), 2)) //Add size column from extracting element at position 2
+  .withColumn("quality", element_at(col("details"), 1)) //Add quality column from extracting element at position 1
+)
+```
+
+### 4.4 Combine data for mattress and pillows (**`not sure its right`**)
+
+```Scala
+val unionDF = mattressDF.unionByName(pillowDF)
+  .drop("details")
+)
+```
+
+
+### 4.5 List all size and quality options bought by each user
+
+```Scala
+val optionsDF = unionDF.groupBy("email") //Group rows in unionDF by email
+  .agg(collect_set("size").alias("size options"), //Collect set of all items in size for each user with alias "size options"
+       collect_set("quality").alias("quality options")) //Collect set of all items in quality for each user with alias "quality options"
+)
+```
+
+
+
+
+
+
+
+
