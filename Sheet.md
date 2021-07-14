@@ -130,5 +130,11 @@ Example: date_add
 val plus2DF = timestampDF.withColumn("plus_two_days", date_add(col("timestamp"), 2))
 ```
 
+### 4. Manipulate Datetimes
 
-
+```Scala
+val detailsDF = (df.withColumn("items", explode(col("items"))) // выделяет каждый элемент сложного типа в отдельную колонку
+  .select("email", "items.item_name")
+  .withColumn("details", split(col("item_name"), " ")) // разделает строку на элементы по пробелу Standard Full Mattress -> ["Standard", "Full", "Mattress"]
+)
+```
