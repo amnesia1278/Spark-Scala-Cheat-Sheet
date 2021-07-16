@@ -183,8 +183,38 @@ val optionsDF = unionDF.groupBy("email") //Group rows in unionDF by email
 ```
 
 
+## UDF 
 
+```Scala
+// Step 1 - define a function
 
+def firstLetterFunction (email: String): String = {
+  email(0).toString
+}
+)
+
+// Step 2 assign our defined function to the variable
+
+val firstLetterUDF = udf(firstLetterFunction _)
+
+// Step now we can apply our function
+
+salesDF.select(firstLetterUDF(col("email")))
+
+```
+
+### Register function to the SQL
+
+```Scala
+// Register
+spark.udf.register("sql_udf", firstLetterFunction _)
+```
+
+```Scala
+// Apply
+%sql
+SELECT sql_udf(email) AS firstLetter FROM sales
+```
 
 
 
