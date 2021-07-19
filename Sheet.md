@@ -183,7 +183,7 @@ val optionsDF = unionDF.groupBy("email") //Group rows in unionDF by email
 ```
 
 
-## UDF 
+## 5. UDF 
 
 ```Scala
 // Step 1 - define a function
@@ -215,6 +215,39 @@ spark.udf.register("sql_udf", firstLetterFunction _)
 %sql
 SELECT sql_udf(email) AS firstLetter FROM sales
 ```
+
+## 6. Partition
+
+### Get partitions and cores
+
+```Scala
+val df = spark.read.parquet(eventsPath)
+df.rdd.getNumPartitions
+```
+
+```Scala
+// Access SparkContext through SparkSession to get the number of cores or slots
+println(spark.sparkContext.defaultParallelism)
+```
+
+### Repartition
+
+```Scala
+val repartitionedDF = df.repartition(8)
+```
+
+### Coalesce
+Returns a new DataFrame that has exactly `n` partitions, when the fewer partitions are requested
+If a larger number of partitions is requested, it will stay at the current number of partitions
+
+```Scala
+val coalesceDF = df.coalesce(8)
+```
+
+
+
+
+
 
 
 
